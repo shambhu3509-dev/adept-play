@@ -1,0 +1,3 @@
+-- Adept Play schema
+-- The recommended installer is install.php.
+-- Default admin password is generated with PHP password_hash during installation.

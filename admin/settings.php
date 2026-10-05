@@ -1,0 +1,7 @@
+<?php
+require_once __DIR__.'/../common/config.php';require_admin();$error='';
+if($_SERVER['REQUEST_METHOD']==='POST'){verify_csrf();try{$upi=post_string('admin_upi');set_setting($pdo,'admin_upi',$upi);if(!empty($_FILES['qr']['name']))set_setting($pdo,'upi_qr',upload_qr($_FILES['qr']));flash('success','Settings saved.');redirect('settings.php');}catch(Throwable $e){$error=$e->getMessage();}}
+$upi=setting($pdo,'admin_upi');$qr=setting($pdo,'upi_qr');$pageTitle='Settings';require __DIR__.'/common/header.php';
+?>
+<div class="max-w-xl"><h1 class="text-2xl font-black mb-5">Payment Settings</h1><?php if($error):?><div class="text-rose-300 mb-4"><?=e($error)?></div><?php endif;?><div class="card rounded-2xl p-5"><form method="post" enctype="multipart/form-data" class="space-y-5"><input type="hidden" name="csrf" value="<?=e(csrf_token())?>"><label class="block text-sm">Admin UPI ID<input name="admin_upi" value="<?=e($upi)?>" placeholder="admin@upi" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-xl p-3"></label><label class="block text-sm">Upload UPI QR Code<input type="file" name="qr" accept="image/png,image/jpeg,image/webp" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-xl p-3"></label><?php if($qr):?><img src="<?=e('../'.$qr)?>" class="w-48 rounded-xl" alt="Current QR"><?php endif;?><button class="bg-violet-600 rounded-xl py-3 px-6 font-bold">Save Settings</button></form></div></div>
+<?php require __DIR__.'/common/bottom.php'; ?>

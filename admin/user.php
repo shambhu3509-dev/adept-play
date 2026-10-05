@@ -1,0 +1,7 @@
+<?php
+require_once __DIR__.'/../common/config.php';require_admin();
+if(isset($_GET['block'])){$id=(int)$_GET['block'];$pdo->prepare("UPDATE users SET is_blocked=1 WHERE id=?")->execute([$id]);redirect('user.php');}if(isset($_GET['unblock'])){$pdo->prepare("UPDATE users SET is_blocked=0 WHERE id=?")->execute([(int)$_GET['unblock']]);redirect('user.php');}
+$rows=$pdo->query("SELECT id,username,email,wallet_balance,upi_id,is_blocked,created_at FROM users ORDER BY id DESC")->fetchAll();$pageTitle='Users';require __DIR__.'/common/header.php';
+?>
+<h1 class="text-2xl font-black mb-5">Users</h1><div class="overflow-x-auto card rounded-2xl"><table class="w-full text-sm"><thead><tr class="text-left text-slate-400 border-b border-slate-800"><th class="p-3">User</th><th>Wallet</th><th>UPI</th><th>Status</th><th class="p-3">Action</th></tr></thead><tbody><?php foreach($rows as $r):?><tr class="border-b border-slate-800"><td class="p-3"><b><?=e($r['username'])?></b><div class="text-xs text-slate-500"><?=e($r['email'])?></div></td><td><?=money($r['wallet_balance'])?></td><td><?=e($r['upi_id']??'—')?></td><td><?=$r['is_blocked']?'Blocked':'Active'?></td><td class="p-3"><a class="text-<?=$r['is_blocked']?'emerald':'rose'?>-300" href="?<?=$r['is_blocked']?'unblock':'block'?>=<?=$r['id']?>"><?=$r['is_blocked']?'Unblock':'Block'?></a></td></tr><?php endforeach;?></tbody></table></div>
+<?php require __DIR__.'/common/bottom.php'; ?>
